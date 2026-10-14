@@ -1,0 +1,41 @@
+apiVersion: v1
+
+kind: ConfigMap
+
+metadata:
+  name: app-config
+  namespace: ingress-demo
+
+  labels:
+    app.kubernetes.io/name: ingress-demo
+    app.kubernetes.io/part-of: ingress-demo
+    app.kubernetes.io/component: configuration
+
+data:
+
+  BACKEND_PORT: "8080"
+  SPRING_PROFILES_ACTIVE: "k8s"
+  JAVA_OPTS: "-Xms256m -Xmx512m"
+
+  FRONTEND_PORT: "80"
+  APP_NAME: "Ingress Demo"
+
+  CLUSTER_ENV: "development"
+  LOG_LEVEL: "INFO"
+
+  custom-nginx.conf: |
+    server {
+        listen 80;
+        server_name _;
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
+            try_files $uri $uri/ /index.html;
+        }
+
+        location /healthz {
+            return 200 'OK';
+            add_header Content-Type text/plain;
+        }
+    }

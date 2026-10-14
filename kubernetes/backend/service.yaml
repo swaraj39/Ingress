@@ -1,0 +1,28 @@
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: ingress-demo-backend
+
+  namespace: ingress-demo
+
+  labels:
+    app.kubernetes.io/name: ingress-demo-backend
+    app.kubernetes.io/part-of: ingress-demo
+    app: ingress-demo-backend
+
+  annotations:
+    description: "Spring Boot backend Service — stable endpoint for API traffic"
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: ingress-demo-backend
+
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http

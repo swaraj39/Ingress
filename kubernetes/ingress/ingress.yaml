@@ -1,0 +1,58 @@
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+  name: ingress-demo
+  namespace: ingress-demo
+
+  labels:
+    app.kubernetes.io/name: ingress-demo
+    app.kubernetes.io/part-of: ingress-demo
+    app.kubernetes.io/component: ingress
+
+  annotations:
+
+    nginx.ingress.kubernetes.io/ingress-class: nginx
+
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
+
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "15"
+
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+
+    nginx.ingress.kubernetes.io/use-regex: "true"
+
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Ingress-Controller: nginx";
+      more_set_headers "X-App-Route: ingress-demo";
+
+spec:
+
+  ingressClassName: nginx
+
+  rules:
+
+    - http:
+
+        - path: /api(/|$)(.*)
+          pathType: ImplementationSpecific
+
+          backend:
+            service:
+              name: ingress-demo-backend
+              port:
+                number: 8080
+
+        - path: /
+          pathType: Prefix
+
+          backend:
+            service:
+              name: ingress-demo-frontend
+              port:
+                number: 80

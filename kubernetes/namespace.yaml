@@ -1,0 +1,11 @@
+apiVersion: v1
+
+kind: Namespace
+
+metadata:
+  name: ingress-demo
+
+  labels:
+    app.kubernetes.io/part-of: ingress-demo
+
+    app.kubernetes.io/name: ingress-demo-namespace

@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    image: ingress-demo-backend:local
+
+    container_name: ingress-backend
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms256m -Xmx512m
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    restart: unless-stopped
+
+    networks:
+      - ingress-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    image: ingress-demo-frontend:local
+    container_name: ingress-frontend
+
+    ports:
+      - "3000:80"
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+    networks:
+      - ingress-net
+
+networks:
+  ingress-net:
+    driver: bridge
